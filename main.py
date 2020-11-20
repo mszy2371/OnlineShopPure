@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 import csv
 
 
@@ -13,8 +12,11 @@ class Category():
         products_file = csv.DictReader(f)
         for row in products_file:
             categ = row['category']
+            sub = row['subcategory']
             categories.add(categ)
             subcategories[categ] = []
+            if categ == subcategories[categ]:
+            	subcategories[categ].values.append(sub)
             
 
     def __init__(self, category, subcategory):
@@ -33,8 +35,6 @@ class Product(Category):
 
     def __init__(self, category, subcategory, name, description, unit, qty, price_netto, vat_tax):
         super().__init__(category, subcategory)
-        self.category = category
-        self.subcategory = subcategory
         self.name = name
         self.description = description
         self.unit = unit
@@ -121,8 +121,11 @@ customer1 = Company("Circus Ltd.", "12, Enfield Rd, Potters Bar, EN5 5BE", "offi
 customer2 = Individual("Marcin Szymanek", "94, Mountview Ave, Dunstable, LU5 4DT", "marcin@yahoo.com")
 
 print(Category.subcategories)
+print(Category.subcategories.values)
 
+#pr_list = Product.prod_list_from_csv('products.csv')
 
+#print(pr_list)
 
 
 
