@@ -129,7 +129,7 @@ customer2 = Individual("Marcin Szymanek", "94, Mountview Ave, Dunstable, LU5 4DT
 
 categories = list()
 subcategories = dict()
-
+prod_names = dict()
 with open('products.csv', 'r') as f:
     products_file = csv.reader(f)
     for row in products_file:
@@ -138,11 +138,15 @@ with open('products.csv', 'r') as f:
         		subcategories[row[0]] = []
         	for k, v in subcategories.items():
         	    if k == row[0]:
-        	    	if row[1] not in subcategories[row[0]]:
-        	    		subcategories[row[0]].append(row[1])
+        	    	if row[1] not in v:
+        	    		v.append(row[1])
+        	    		prod_names[row[1]] = []
+        	    		
+        	    
 
 print(categories)
 print(subcategories)
+print(prod_names)
 
 
 
