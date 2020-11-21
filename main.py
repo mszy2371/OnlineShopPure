@@ -120,8 +120,6 @@ class Individual(Customer):
 customer1 = Company("Circus Ltd.", "12, Enfield Rd, Potters Bar, EN5 5BE", "office@circus.co.uk", "24354657")
 customer2 = Individual("Marcin Szymanek", "94, Mountview Ave, Dunstable, LU5 4DT", "marcin@yahoo.com")
 
-print(Category.subcategories)
-print(Category.subcategories.values)
 
 #pr_list = Product.prod_list_from_csv('products.csv')
 
@@ -129,10 +127,22 @@ print(Category.subcategories.values)
 
 
 
+categories = list()
+subcategories = dict()
 
+with open('products.csv', 'r') as f:
+    products_file = csv.reader(f)
+    for row in products_file:
+        	if row[0] not in categories:
+        		categories.append(row[0])
+        		subcategories[row[0]] = []
+        	for k, v in subcategories.items():
+        	    if k == row[0]:
+        	    	if row[1] not in subcategories[row[0]]:
+        	    		subcategories[row[0]].append(row[1])
 
-
-
+print(categories)
+print(subcategories)
 
 
 
