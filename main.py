@@ -1,137 +1,73 @@
-import csv
+from database import Database, db
 
 
+class Category:
 
+	def __init__(self, name):
+		self.name = name
+		self.products = []
 
-class Category():
-
-
-	categories = dict()
-	subcategories = dict()
-	with open('products.csv', 'r') as f:
-		products_file = csv.reader(f)
-		for row in products_file:
-			if row[0] not in categories:
-				categories[row[0]] = []
-			for k, v in categories.items():
-				if k == row[0]:
-					if row[1] not in v:
-						v.append(row[1])
-						subcategories[row[1]] = []
-			for key, value in subcategories.items():
-				if key == row[1]:
-					if row[2] not in value:
-						value.append(row[2])
-	@classmethod
-	def list_items(cls, collection):
-		items = []
-		for item in collection:
-			items.append(item)
-		return items
-			
-
-	def __init__(self, category, subcategory):
-		self.category = category
-		self.subcategory = subcategory
-
-	
-
+	def add_product(self, prod):
+		self.products.append(prod)
+		prod.category = self.name
 	
 	
 
-class Product(Category):
+class Product:
 
 	tax_thresholds = [0, 0.05, 0.08, 0.23]
 
+	counter = 1
 
-	def __init__(self, category, subcategory, name, description, unit, qty, price_netto, vat_tax):
-		super().__init__(category, subcategory)
+	def __init__(self, name, description, unit, qty, purchase_price, vat_tax):
+		self.id = Product.counter
+		Product.counter += 1
 		self.name = name
 		self.description = description
 		self.unit = unit
 		self.qty = int(qty)
-		self.price_netto = float(price_netto)
+		self.purchase_price = float(purchase_price)
+		self.price_netto = (self.purchase_price * 1.25).__round__(2)
 		self.vat_tax = vat_tax
-		self.price_brutto = float(float(price_netto) + float(price_netto) * float(vat_tax)).__round__(2)
+		self.price_brutto = float(float(self.price_netto) + float(self.price_netto) * float(self.vat_tax)).__round__(2)
+		self.category = None
+
 
 	def __repr__(self):
-		return (f"{self.name} - price netto: {self.price_netto}  qty: {self.qty}")
+		return (f"ID:{self.id} product:{self.name} price netto:{self.price_netto} qty: {self.qty}")
 	
 	def __str__(self):
-		return(f"""Product: {self.name}
+		return(f"""
+Product ID: {self.id}
+Product: {self.name}
 description: {self.description}
-category: {self.category}
-subcategory: {self.subcategory}
+category: 
+subcategory: 
 price netto: {self.price_netto}
 price inc. tax: {self.price_brutto} per {self.unit}
 Quantity in stock: {self.qty} """)
 	
+	def __hash__(self):
+		return hash(self.name)
+	
 	@classmethod
-	def prod_list_from_csv(cls, file):
-		products = list()
-		with open(file , mode='r') as f:
-			products_reader = csv.reader(f)
-			rowNr = 0
-			for row in products_reader:
-				if rowNr >= 1:
-					prod = cls(*row)
-					products.append(prod)
-				rowNr += 1
-		return products
+	def prod_list_from_database(cls):
+		pass
 
 	@classmethod
 	def add_product(cls):
-		category = False
-		subcategory = False
-		new_category =False
-		while category not in cls.categories:
-			category = input(f"""Enter product CATEGORY (chooose one of the existing categories
-{cls.list_items(cls.categories)} or type a new one): """)
-			if category in cls.categories:
-				break
-			print(f"Category does not exist yet. Current categories are: {cls.list_items(cls.categories)}")
-			answer = input(f"Do you want to add a new category? (y/n)")
-			if answer.lower() in ('y', 'yes'):
-				new_category = category
-				print(f"added new category  {new_category}")
-				cls.categories[new_category] = []
-				break
-		while subcategory not in cls.subcategories:
-			if new_category:
-				new_subcategory = input(f"Enter a subcategory for product in new category '{new_category}': ")
-				subcategory = new_subcategory
-				print(f"added new subcategory  {subcategory}")
-				cls.subcategories[subcategory] = []
-				cls.categories[category].append(cls.subcategories[new_subcategory])
-			else:
-				subcategory = input(f"""Enter product SUBCATEGORY (chooose existing subcategory {cls.list_items(cls.categories[category])}
-				or type a new one): """)
-				if subcategory in cls.subcategories:
-					break
-				else:
-					print(f"Subcategory does not exist yet. Current subcategories of category {category} are: {cls.list_items(cls.categories[category])}")
-					answer = input(f"Do you want to add a new subcategory? (y/n)")
-					if answer.lower() in ('y', 'yes'):
-						new_subcategory = subcategory
-						print(f"added new subcategory  {new_subcategory}")
-						cls.subcategories[new_subcategory] = []
-						cls.categories[category].append(cls.subcategories[new_subcategory])
-						break
-		name = input("Enter product name: ")
-		description = input("Enter product description: ")
-		unit = input("Enter units (i.e. item, kg, cm etc.): ")
-		qty = int(input("Enter quantity: "))
-		price_netto = float(input("Enter price netto: "))
-		vat_tax = None
-		while vat_tax not in cls.tax_thresholds:
-			vat_tax = float(input("Enter tax threshold: (available options: 0, 0.05, 0.08 or 0.23): "))
-			if vat_tax not in cls.tax_thresholds:
-				print("Incorrect tax threshold")
-		product = (category, subcategory, name, description, unit, qty, price_netto, vat_tax)
-		with open('products.csv', mode='a') as products_file:
-			products_writer = csv.writer(products_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-			products_writer.writerow(product)
-		return product
+		pass
+
+	def delete_product(self):
+		db.c.execute("DELETE FROM products WHERE id=?", (self.id,))
+
+
+	def order_product(self, qty):
+		pass
+
+	def sell_product(self, qty):
+		pass
+
 
 
 class Customer:
@@ -143,6 +79,11 @@ class Customer:
 	def __str__(self):
 		return f"""Customer: {self.name} \n address: {self.address} \n e-mail: {self.email}"""
 
+	@classmethod
+	def add_customer(cls):
+		pass
+
+	
 
 class Company(Customer):
 	def __init__(self, name, address, email, tax_no):
@@ -155,18 +96,24 @@ class Individual(Customer):
 		super().__init__(name, address, email)
 
 
-
-customer1 = Company("Circus Ltd.", "12, Enfield Rd, Potters Bar, EN5 5BE", "office@circus.co.uk", "24354657")
-customer2 = Individual("Marcin Szymanek", "94, Mountview Ave, Dunstable, LU5 4DT", "marcin@yahoo.com")
-
-
-# products = Product.prod_list_from_csv('products.csv')
-
-# print(products[1])
+class Supplier(Customer):
+	pass
 
 
+prod1 = Product('desk', 'brown oakwood desk', 'item', 8, 134.69, 0.23)
+prod2 = Product('chair', 'black office desk chair', 'item', 10, 65.30, 0.23)
+prod3 = Product('mug', 'yellow coffee mug', 'item', 110, 2.60, 0.08)
+cat1 = Category('office')
+cat2 = Category('home')
 
-Product.add_product()
 
+cat1.add_product(prod1)
+cat1.add_product(prod2)
+cat2.add_product(prod3)
+cat1.add_product(prod3)
 
-
+print(prod1.category)
+print(prod2.category)
+print(prod3.category)
+print(cat1.products)
+print(cat2.products)
