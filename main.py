@@ -47,8 +47,7 @@ class Product:
 Product ID: {self.id}
 Product: {self.name}
 description: {self.description}
-category: 
-subcategory: 
+category: {self.category}
 price netto: {self.price_netto}
 price inc. tax: {self.price_brutto} per {self.unit}
 Quantity in stock: {self.qty} """)
@@ -106,20 +105,20 @@ class Supplier(Customer):
 	pass
 
 
-prod1 = Product('desk', 'brown oakwood desk', 'item', 8, 134.69, 0.23)
-prod2 = Product('chair', 'black office desk chair', 'item', 10, 65.30, 0.23)
-prod3 = Product('mug', 'yellow coffee mug', 'item', 110, 2.60, 0.08)
-cat1 = Category('office')
-cat2 = Category('home')
+# prod1 = Product('desk', 'brown oakwood desk', 'item', 8, 134.69, 0.23)
+# prod2 = Product('chair', 'black office desk chair', 'item', 10, 65.30, 0.23)
+# prod3 = Product('mug', 'yellow coffee mug', 'item', 110, 2.60, 0.08)
+# cat1 = Category('office')
+# cat2 = Category('home')
+# products = [prod1, prod2, prod3]
 
+# cat1.add_product(prod1)
+# cat1.add_product(prod2)
+# cat2.add_product(prod3)
+# cat1.add_product(prod3)
 
-cat1.add_product(prod1)
-cat1.add_product(prod2)
-cat2.add_product(prod3)
-cat1.add_product(prod3)
-
-print(prod1.category)
-print(prod2.category)
-print(prod3.category)
-print(cat1.products)
-print(cat2.products)
+# print(prod1.category)
+# print(prod2.category)
+# print(prod3.category)
+# print(cat1.name, cat1.products)
+# print(cat2.name, cat2.products)
