@@ -8,8 +8,14 @@ class Category:
 		self.products = []
 
 	def add_product(self, prod):
-		self.products.append(prod)
-		prod.category = self.name
+		if prod.category is None:
+			self.products.append(prod)
+			prod.category = self.name
+		else:
+			print(f"Cannot add product: {prod.name} to category: {self.name}. Product already belongs to category: {prod.category}")
+			
+	def change_prod_category(self, prod):
+		pass
 	
 	
 
@@ -48,7 +54,7 @@ price inc. tax: {self.price_brutto} per {self.unit}
 Quantity in stock: {self.qty} """)
 	
 	def __hash__(self):
-		return hash(self.name)
+		return hash(self.id)
 	
 	@classmethod
 	def prod_list_from_database(cls):
